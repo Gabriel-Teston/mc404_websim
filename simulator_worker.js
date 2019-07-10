@@ -51,23 +51,17 @@ function debugTest(m){
     getDebugMsg();
 }
 
+var xhr = new XMLHttpRequest();
 function getDebugMsg(){
-    var xhr = new XMLHttpRequest();
     xhr.open("GET", "http://127.0.0.1:5689/gdbInput", false);  // synchronous request
     xhr.send(null);
-    if (xhr.status === 200) {
-      console.log(xhr.responseText);
-    }
     return xhr.responseText;
 }
 
+var xhrS = new XMLHttpRequest();
 function sendDebugMsg(msg){
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://127.0.0.1:5689/gdbInput", false);  // synchronous request
-    xhr.send(msg);
-    if (xhr.status === 200) {
-      console.log(xhr.responseText);
-    }
+    xhrS.open("POST", "http://127.0.0.1:5689/gdbInput", false);  // synchronous request
+    xhrS.send(msg);
 }
 
 var Module = {

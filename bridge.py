@@ -3,6 +3,13 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from io import BytesIO
 from sys import stdin, stdout, stderr
 
+DEBUG_ENABLED = False
+
+def err_print(m):
+  if(not DEBUG_ENABLED):
+    return
+  stderr.write(m)
+  stderr.flush()
 
 def putDebugChar(c):
   stdout.write(c)
@@ -32,8 +39,12 @@ def readFromGDB():
     if (ch == '#'):
       pacSum = int(getDebugChar(n=2), base=16)
 
-      if (sum != pacSum):
+      if (sum&0xFF != pacSum):
         putDebugChar('-') # Signal failed reception.
+        stdout.flush()
+        stderr.write("Signal failed reception. %d !=  %d\n" % (sum&0xFF, pacSum))
+        stderr.write()
+
       else:
         putDebugChar('+') # Signal successul reception.
         stdout.flush()
@@ -41,6 +52,7 @@ def readFromGDB():
         if (len(data) >= 3 and data[2] == ':'):
           putDebugChar(data[0])
           putDebugChar(data[1])
+          stdout.flush()
           data = data[3:]
         return data
   return data
@@ -48,13 +60,13 @@ def readFromGDB():
 def writeToGDB(data):
   while 1:
     putDebugChar('$')
-    checksum = 0
+    checksum = 0x1000000
     for c in data:
       putDebugChar(c)
       checksum += ord(c)
 
     putDebugChar('#')
-    putDebugChar(hex(checksum))
+    putDebugChar(hex(checksum)[-2:])
     stdout.flush()
   
     c = getDebugChar()
@@ -69,12 +81,10 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     self.send_header("Access-Control-Allow-Origin", "*")
     self.send_header('Content-type','text/html')
     self.end_headers()
-    stderr.write("[BRIDGE DEBUG] Reading from GDB ")
-    stderr.flush()
+    err_print("[BRIDGE DEBUG] Reading from GDB\n")
     res = readFromGDB()
     self.wfile.write(bytes(res, "utf-8"))
-    stderr.write("[BRIDGE DEBUG] Sent: ", res)
-    stderr.flush()
+    err_print("[BRIDGE DEBUG] Sent: " + str(res) + '\n')
 
   def do_POST(self):
     content_length = int(self.headers['Content-Length'])
@@ -83,15 +93,18 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     self.send_header("Access-Control-Allow-Origin", "*")
     self.send_header('Content-type','text/html')
     self.end_headers()
-    stderr.write("[BRIDGE DEBUG] Writing to GDB ")
-    stderr.flush()
-    writeToGDB(body)
-    stderr.write("[BRIDGE DEBUG] Received: ", body)
-    stderr.flush()
-    response = BytesIO()
-    response.write(b'Written to GDB: ')
-    response.write(body)
-    self.wfile.write(response.getvalue())
+    err_print("[BRIDGE DEBUG] Writing to GDB\n")
+    writeToGDB(body.decode("utf-8"))
+    err_print("[BRIDGE DEBUG] Received: " + body.decode("utf-8") + '\n')
+    # response = BytesIO()
+    # response.write(b'Written to GDB: ')
+    # response.write(body)
+    # self.wfile.write(response.getvalue())
+
+  def log_message(self, format, *args):
+    if(DEBUG_ENABLED):
+      super.log_message(format, args)
+    return
 
 
 httpd = HTTPServer(('localhost', 5689), SimpleHTTPRequestHandler)
