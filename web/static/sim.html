@@ -7,10 +7,50 @@
     <title>Document</title>
     <script src="main.js"></script>
     <script src="webrtc.js"></script>
+    <link rel="stylesheet" href="sim.css">
 </head>
 <body>
-    <form action="#">
-        <input type="file" name="code" id="codeSelector">
-    </form>
+    <div id="executionControl">
+        <div id="config">
+            <form action="#">
+                
+                <div>
+                    <label for="codeSelector">Executable:</label> 
+                    <input type="file" name="codeSelector" id="codeSelector" >
+                    <input type="button" value="Run" class="secondElement">
+                </div>
+                <div class="sameLineOptions">
+                    <label>
+                        <input type="checkbox" name="GDB" id="gdb"> GDB
+                    </label> 
+                    <label>
+                        <input type="checkbox" name="Newlib" id="newlib"> Newlib
+                    </label>
+                    <input type="button" value="Advanced Options">
+                </div>
+                <div id="advanced_options_div">
+                    <label>
+                        <input type="checkbox" name="Exceptions" id="enable_exceptions"> Enable Exceptions
+                    </label>
+                    <label for="cmd">Command Line:</label> 
+                    <input type="text" name="Command Line" id="cmd" class="secondElement">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="textIO">
+        STDIN:
+        <div id="stdin" class="stdio_div">
+            
+        </div>
+        STDOUT:
+        <div id="stdout" class="stdio_div">
+    
+        </div>
+        STDERR:
+        <div id="stderr" class="stdio_div">
+    
+        </div>
+    </div>
 </body>
 </html>
