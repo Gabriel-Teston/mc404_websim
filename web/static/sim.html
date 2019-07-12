@@ -1,56 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <script src="main.js"></script>
-    <script src="webrtc.js"></script>
-    <link rel="stylesheet" href="sim.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="main.js"></script>
+  <script src="webrtc.js"></script>
+  <link rel="stylesheet" href="sim.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">  
 </head>
 <body>
-    <div id="executionControl">
-        <div id="config">
-            <form action="#">
-                
-                <div>
-                    <label for="codeSelector">Executable:</label> 
-                    <input type="file" name="codeSelector" id="codeSelector" >
-                    <input type="button" value="Run" class="secondElement">
-                </div>
-                <div class="sameLineOptions">
-                    <label>
-                        <input type="checkbox" name="GDB" id="gdb"> GDB
-                    </label> 
-                    <label>
-                        <input type="checkbox" name="Newlib" id="newlib"> Newlib
-                    </label>
-                    <input type="button" value="Advanced Options">
-                </div>
-                <div id="advanced_options_div">
-                    <label>
-                        <input type="checkbox" name="Exceptions" id="enable_exceptions"> Enable Exceptions
-                    </label>
-                    <label for="cmd">Command Line:</label> 
-                    <input type="text" name="Command Line" id="cmd" class="secondElement">
-                </div>
-            </form>
-        </div>
+  <div class="container-fluid d-flex flex-column" style="min-height: 100vh;">
+    <div class="row text-center justify-content-md-center" id="title">
+      <div class="col col-xl-4">
+        <h6>
+          JavaScript version of <a href="https://github.com/westerndigitalcorporation/swerv-ISS" target="_blank">Western Digital's SweRV Instruction Set Simulator</a>
+        </h6>
+        <img src="riscv-logo-2.png" class="img-fluid" alt="riscv logo">
+      </div>
     </div>
-    <div id="textIO">
-        STDIN:
-        <div id="stdin" class="stdio_div">
-            
-        </div>
-        STDOUT:
-        <div id="stdout" class="stdio_div">
+    <div class="row text-center justify-content-md-center" id="config">
+      <div class="col col-xl-4">
+        <div>
+        <form action="#">
+          <div class="input-group mb-3">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input"  id="codeSelector">
+              <label class="custom-file-label" for="codeSelector" aria-describedby="run_button">Choose file</label>
+            </div>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" id="run_button">Run</button>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="custom-control custom-switch custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="gdb_switch">
+              <label class="custom-control-label" for="gdb_switch">GDB</label>
+            </div>
+            <div class="custom-control custom-switch custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="newlib_switch" checked=true>
+              <label class="custom-control-label" for="newlib_switch">Newlib</label>
+            </div>
+            <br>
+            <input type="button" class="btn btn-link" value="Advanced Options" data-toggle="collapse" data-target="#advanced_options_div" aria-expanded="false" aria-controls="advanced_options_div">
+          </div>
+          <div id="advanced_options_div" class="collapse text-center">
+            <label for="config_isa">ISAs:</label>
+            <div class="custom-control custom-checkbox custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="config_isaA" checked=true>
+              <label class="custom-control-label" for="config_isaA">A</label>
+            </div>
+            <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="config_isaC" checked=true>
+                <label class="custom-control-label" for="config_isaC">C</label>
+            </div>
+            <div class="custom-control custom-checkbox custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="config_isaD" checked=true>
+              <label class="custom-control-label" for="config_isaD">D</label>
+            </div>
+            <div class="custom-control custom-checkbox custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="config_isaF" checked=true>
+              <label class="custom-control-label" for="config_isaF">F</label>
+            </div>
+            <div class="custom-control custom-checkbox custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="config_isaI" checked=true disabled>
+              <label class="custom-control-label" for="config_isaI">I</label>
+            </div>
+            <div class="custom-control custom-checkbox custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="config_isaM" checked=true>
+              <label class="custom-control-label" for="config_isaM">M</label>
+            </div>
+            <div class="custom-control custom-checkbox custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="config_isaS" checked=true>
+              <label class="custom-control-label" for="config_isaS">S</label>
+            </div>
+            <div class="custom-control custom-checkbox custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="config_isaU" checked=true>
+              <label class="custom-control-label" for="config_isaU">U</label>
+            </div>
     
-        </div>
-        STDERR:
-        <div id="stderr" class="stdio_div">
-    
-        </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="config_cmdline_base">Additional parameters:</span>
+              </div>
+              <input type="text" class="form-control" id="config_cmdline" aria-describedby="basic-addon3" value="--setreg sp=0x10000">
+            </div>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="exceptions_switch">
+              <label class="custom-control-label" for="exceptions_switch">Simulator Exceptions</label>
+            </div>
+          </div>
+        </form>
+      </div>
+      </div>
     </div>
+    <div class="row justify-content-md-center align-items-end flex-grow-1" id="io_area">
+      <div class="col text-center">
+        <nav>
+          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-output-tab" data-toggle="tab" href="#nav-output" role="tab" aria-controls="nav-output" aria-selected="true">Output</a>
+            <a class="nav-item nav-link" id="nav-stdio-tab" data-toggle="tab" href="#nav-stdio" role="tab" aria-controls="nav-stdio" aria-selected="false">Standard IO</a>
+            <a class="nav-item nav-link" id="nav-mmio-tab" data-toggle="tab" href="#nav-mmio" role="tab" aria-controls="nav-mmio" aria-selected="false">Memory-Mapped IO</a>
+            <a class="nav-item nav-link" id="nav-interrupt-tab" data-toggle="tab" href="#nav-interrupt" role="tab" aria-controls="nav-interrupt" aria-selected="false">External Interruptions</a>
+          </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <div class="tab-pane fade show active" id="nav-output" role="tabpanel" aria-labelledby="nav-output-tab">
+            <div class="form-group">
+              <textarea class="form-control" id="general_output" readonly  rows="4"></textarea>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="nav-stdio" role="tabpanel" aria-labelledby="nav-stdio-tab">
+            <div class="form-group">
+              <label for="stdin">STDIN</label>
+              <textarea class="form-control" id="stdin"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="stdout">STDOUT</label>
+              <textarea class="form-control" id="stdout" readonly></textarea>
+            </div>
+            <div class="form-group">
+              <label for="stderr">STDERR</label>
+              <textarea class="form-control" id="stderr" readonly></textarea>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="nav-mmio" role="tabpanel" aria-labelledby="nav-mmio-tab">...</div>
+          <div class="tab-pane fade" id="nav-interrupt" role="tabpanel" aria-labelledby="nav-interrupt-tab">...</div>
+        </div>       
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
