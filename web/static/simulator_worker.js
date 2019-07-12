@@ -49,8 +49,8 @@ function sendDebugMsg(msg){
 
 var Module = {
   // arguments : ["--version"],
-  arguments : ["--newlib", "/working/exg", "--isa", "acdfimsu", "--setreg", "sp=0x10000"],
+  arguments : ["--newlib", "/working/ex2", "--isa", "acdfimsu", "--setreg", "sp=0x10000"],
   preRun : [initFS],
-  print : function (text) {postMessage({type: "stdio", subtype: 1, msg: text});},
-  printErr : function (text) {postMessage({type: "stdio", subtype: 2, msg: text});}
+  print : function (text) {postMessage({type: "stdio", stdioNumber: 1, msg: text});},
+  printErr : function (text) {postMessage({type: "stdio", stdioNumber: 2, msg: text});}
 };

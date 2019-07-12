@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
 
 class RISCV_Simulator{
-  
+
   constructor(HTMLFileList, outputFunction=null){
     this.HTMLFileList = HTMLFileList;
     this.outputFunction = outputFunction;
@@ -20,8 +20,8 @@ class RISCV_Simulator{
       }
       switch(e.data.type){
         case "stdio":
-          if(this.controller.stdioHandler.length == 0){
-            this.controller.stdioHandler[e.data.stdioNumber](e.data.stdio.msg);
+          if(this.controller.stdioHandler.length != 0){
+            this.controller.stdioHandler[e.data.stdioNumber](e.data.msg);
           }else{
             console.log(e.data);
           }
@@ -39,7 +39,7 @@ class RISCV_Simulator{
     };
   }
 
-  
+
 
   run(){
     if(this.stdioHandler[0]){
@@ -68,12 +68,3 @@ class RISCV_Simulator{
     this.w.postMessage({type: "stdin", stdin: s});
   }
 }
-
-
-
-
-
-
-
-
-

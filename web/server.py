@@ -1,20 +1,17 @@
-import tornado.ioloop
-import tornado.web
+#!/usr/bin/env python3
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render("sim.html")
+import http.server
+import socketserver
 
-class StaticWASMFileHandler(tornado.web.StaticFileHandler):
-    def get_content_type(self):
-        return 'application/wasm'
+PORT = 8000
 
-def make_app():
-    return tornado.web.Application([
-        (r"/", MainHandler),
-    ])
+Handler = http.server.SimpleHTTPRequestHandler
+Handler.extensions_map.update({
+  '.wasm': 'application/wasm',
+})
 
-if __name__ == "__main__":
-    app = make_app()
-    app.listen(8888)
-    tornado.ioloop.IOLoop.current().start()
+socketserver.TCPServer.allow_reuse_address = True
+with socketserver.TCPServer(("", PORT), Handler) as httpd:
+  httpd.allow_reuse_address = True
+  print("serving at port", PORT)
+  httpd.serve_forever()
