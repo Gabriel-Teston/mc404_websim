@@ -26,7 +26,7 @@
           <div class="input-group mb-3">
             <div class="custom-file">
               <input type="file" class="custom-file-input"  id="codeSelector" aria-describedby="run_button">
-              <label class="custom-file-label" for="codeSelector">Choose file</label>
+              <label class="custom-file-label" for="codeSelector" id="label_codeSelector">Choose file</label>
             </div>
             <div class="input-group-append">
               <button class="btn btn-outline-secondary" type="button" id="run_button">Run</button>
@@ -83,7 +83,7 @@
               <div class="input-group-prepend">
                 <span class="input-group-text" id="config_cmdline_base">Additional parameters:</span>
               </div>
-              <input type="text" class="form-control" id="config_cmdline" aria-describedby="basic-addon3" value="--setreg sp=0x10000">
+              <input type="text" class="form-control" id="config_cmdline" aria-describedby="basic-addon3" value="--setreg sp=0xfffff">
             </div>
             <div class="custom-control custom-switch">
               <input type="checkbox" class="custom-control-input" id="exceptions_switch">

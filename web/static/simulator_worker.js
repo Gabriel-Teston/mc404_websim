@@ -12,6 +12,9 @@ onmessage = function(e) {
       stdinBuffer = e.data.stdin;
       console.log("STDIN = " + stdinBuffer);
       break;
+    case "set_args":
+      Module.arguments = e.data.vec;
+      break;
   }
 };
 

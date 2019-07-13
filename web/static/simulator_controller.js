@@ -39,7 +39,9 @@ class RISCV_Simulator{
     };
   }
 
-
+  setArgs(args){
+    this.w.postMessage({type: "set_args", vec: args});
+  }
 
   run(){
     if(this.stdioHandler[0]){
@@ -49,7 +51,7 @@ class RISCV_Simulator{
     this.w.postMessage({type: "start_sim"});
   }
 
-  restart(){
+  stop(){
     this.w.terminate();
     this.startWorker();
   }
