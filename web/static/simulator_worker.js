@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 var stdinBuffer = "12 23";
 
 onmessage = function(e) {
@@ -15,8 +17,38 @@ onmessage = function(e) {
     case "set_args":
       Module.arguments = e.data.vec;
       break;
+    case "mmio":
+      mmio = new MMIO(e.data.vec);
+      break;
   }
 };
+
+class MMIO{
+  constructor(sharedBuffer){
+    this.memory = [];
+    this.memory[1] = new Uint8Array(sharedBuffer);
+    this.memory[2] = new Uint16Array(sharedBuffer);
+    this.memory[4] = new Uint32Array(sharedBuffer);
+    this.size = sharedBuffer.byteLength;
+  }
+
+  load(addr, size){
+    addr &= 0xFFFF;
+    if(addr > this.size){
+      postMessage({type: "output", subtype: "error", msg: "MMIO Access Error"});
+    }
+    return Atomics.load(this.memory[size], (addr/size) | 0);
+  }
+
+  store(addr, size, value){
+    addr &= 0xFFFF;
+    if(addr > this.size){
+      postMessage({type: "output", subtype: "error", msg: "MMIO Access Error"});
+    }
+    Atomics.store(this.memory[size], (addr/size) | 0, value);
+  }
+}
+
 
 function getStdin (){
   if(stdinBuffer.length == 0){

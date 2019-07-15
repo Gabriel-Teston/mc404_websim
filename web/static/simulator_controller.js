@@ -2,12 +2,12 @@
 
 class RISCV_Simulator{
 
-  constructor(HTMLFileList, outputFunction=null){
+  constructor(HTMLFileList, outputFunction=null, sharedArraySize=0x10000){
     this.HTMLFileList = HTMLFileList;
     this.outputFunction = outputFunction;
     this.stdioHandler = [];
+    this.sharedArraySize = sharedArraySize;
     this.startWorker();
-
   }
 
   startWorker(){
@@ -37,6 +37,10 @@ class RISCV_Simulator{
           console.log("w: " + e.data);
       }
     };
+    if(typeof SharedArrayBuffer != "undefined"){
+      this.mmio = new SharedArrayBuffer(this.sharedArraySize);
+      this.w.postMessage({type: "mmio", vec: this.mmio});
+    }
   }
 
   setArgs(args){

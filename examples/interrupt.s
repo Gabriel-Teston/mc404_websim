@@ -27,5 +27,4 @@ lw a1, 0(a0)              # restaura a1
 csrrw a0, mscratch, a0 # restaura a0; mscratch = &temp storage
 mret # retorna do tratador
 
-
 __start:

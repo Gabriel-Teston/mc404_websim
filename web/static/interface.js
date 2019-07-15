@@ -44,6 +44,95 @@ function loadParameters(){
   return param;
 }
 
+class MMIO_Monitor{
+  constructor(sim){
+    this.sim = sim;
+    this.addressList = [];
+    this.int8memory = new Uint8Array(this.sim.mmio);
+    this.int16memory = new Uint16Array(this.sim.mmio);
+    this.int32memory = new Uint32Array(this.sim.mmio);
+    document.getElementById("mmio_add").onclick = this.addHTML;
+    document.getElementById("mmio_remove").onclick = this.removeHTML;
+    document.getElementById("mmio_set8").onclick = this.set8;
+    document.getElementById("mmio_set16").onclick = this.set16;
+    document.getElementById("mmio_set32").onclick = this.set32;
+    document.getElementById("mmio_set").onclick = this.set32;
+  }
+
+  set8() {
+    var address = parseInt(document.getElementById("mmio_set_address").value) & 0xFFFF;
+    var value = parseInt(document.getElementById("mmio_set_value").value) & 0xFF;
+    Atomics.store(mmioMonitor.int8memory, address, value);
+    mmioMonitor.add(address);
+  }
+
+  set16() {
+    var address = parseInt(document.getElementById("mmio_set_address").value) & 0xFFFF;
+    var value = parseInt(document.getElementById("mmio_set_value").value) & 0xFFFF;
+    Atomics.store(mmioMonitor.int16memory, address >> 1, value);
+    mmioMonitor.add(address);
+  }
+
+  set32() {
+    var address = parseInt(document.getElementById("mmio_set_address").value) & 0xFFFF;
+    var value = parseInt(document.getElementById("mmio_set_value").value) & 0xFFFFFFFF;
+    Atomics.store(mmioMonitor.int32memory, address >> 2, value);
+    mmioMonitor.add(address);
+  }
+
+  addHTML(){
+    var address = parseInt(document.getElementById("mmio_add_address").value);
+    mmioMonitor.add(address);
+  }
+
+  removeHTML(){
+    var address = parseInt(document.getElementById("mmio_add_address").value);
+    mmioMonitor.remove(address);
+  }
+
+  add(address) {
+    var index = mmioMonitor.addressList.indexOf(address & 0xFFFF);
+    if (index == -1) {
+      mmioMonitor.addressList.push(address & 0xFFFF);
+    }
+  }
+
+  remove(address){
+    var index = mmioMonitor.addressList.indexOf(address & 0xFFFF);
+    if (index > -1) {
+      mmioMonitor.addressList.splice(index, 1);
+    }
+  }
+
+  mmioMonitoring(){
+    var data = ""; 
+    for (var i in mmioMonitor.addressList) {
+      var address = mmioMonitor.addressList[i];
+      var value = Atomics.load(mmioMonitor.int32memory, address  >> 2);
+      data += "Memory[" + address.toString(16) +"]: {" + (value >> 24).toString(16) + ", " + 
+                                                        ((value >> 16) & 0xff).toString(16) + ", " + 
+                                                        ((value >> 8) & 0xff).toString(16) + ", "  +
+                                                        ((value) & 0xff).toString(16) + "}\n";
+    }
+    document.getElementById("mmio_area").innerHTML = data;
+  }
+
+  start(){
+    if(typeof SharedArrayBuffer != "undefined"){
+      mmioMonitor.int8memory = new Uint8Array(mmioMonitor.sim.mmio);
+      mmioMonitor.int16memory = new Uint16Array(mmioMonitor.sim.mmio);
+      mmioMonitor.int32memory = new Uint32Array(mmioMonitor.sim.mmio);
+      mmioMonitor.timer = setInterval(mmioMonitor.mmioMonitoring, 500);
+    }
+  }
+
+  stop(){
+    clearInterval(mmioMonitor.timer);
+  }
+}
+
+mmioMonitor = new MMIO_Monitor(sim);
+
 var sim_running = false;
 document.getElementById("run_button").onclick = function(){
   if(sim_running){
@@ -51,6 +140,7 @@ document.getElementById("run_button").onclick = function(){
     run_button.innerHTML = "Run";
     run_button.setAttribute("class", "btn btn-outline-success");
     sim_running = false;
+    mmioMonitor.stop();
   }else{
     sim_running = true;
     args = loadParameters();
@@ -58,6 +148,7 @@ document.getElementById("run_button").onclick = function(){
     sim.run(); 
     run_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Stop';
     run_button.setAttribute("class", "btn btn-danger");
+    mmioMonitor.start();
   }
 };
 
@@ -70,3 +161,5 @@ codeSelector.onchange = function(){
     label_codeSelector.innerHTML = "Choose file";
   }
 };
+
+
