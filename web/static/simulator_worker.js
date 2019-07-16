@@ -8,6 +8,7 @@ onmessage = function(e) {
       files = e.data.code;
       break;
     case "start_sim":
+      intController = new InterruptionController();
       importScripts("whisper.js");
       break;
     case "stdin":
@@ -46,6 +47,17 @@ class MMIO{
       postMessage({type: "output", subtype: "error", msg: "MMIO Access Error"});
     }
     Atomics.store(this.memory[size], (addr/size) | 0, value);
+  }
+}
+
+class InterruptionController{
+  constructor(){
+
+  }
+
+  get interrupt(){
+    console.log("check");
+    return 0;
   }
 }
 
