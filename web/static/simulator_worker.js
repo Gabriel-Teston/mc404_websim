@@ -83,15 +83,32 @@ function initFS() {
 
 var xhr = new XMLHttpRequest();
 function getDebugMsg(){
-  xhr.open("GET", "http://127.0.0.1:5689/gdbInput", false);  // synchronous request
-  xhr.send(null);
-  return xhr.responseText;
+  while(1){
+    try{
+      xhr.open("GET", "http://127.0.0.1:5689/gdbInput", false);  // synchronous request
+      xhr.send(null);
+      if(xhr.status === 200){
+        return xhr.responseText;
+      }
+    }catch(e){
+      postMessage({type: "output", subtype: "info", msg: "Waiting for GDB..."});
+    }
+  }
 }
 
 var xhrS = new XMLHttpRequest();
 function sendDebugMsg(msg){
-  xhrS.open("POST", "http://127.0.0.1:5689/gdbInput", false);  // synchronous request
-  xhrS.send(msg);
+  while(1){
+    try {
+      xhrS.open("POST", "http://127.0.0.1:5689/gdbInput", false);  // synchronous request
+      xhrS.send(msg);
+      if(xhrS.status === 200){
+        return;
+      }
+    } catch (error) {
+      postMessage({type: "output", subtype: "info", msg: "Waiting for GDB..."});
+    }
+  }
 }
 
 var Module = {
