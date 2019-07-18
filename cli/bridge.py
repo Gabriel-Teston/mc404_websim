@@ -1,7 +1,11 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
-
+from threading import Timer
 from io import BytesIO
 from sys import stdin, stdout, stderr
+import os
+
+def exit_bridge():
+  os._exit(0)
 
 DEBUG_ENABLED = False
 
@@ -85,6 +89,10 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     res = readFromGDB()
     self.wfile.write(bytes(res, "utf-8"))
     err_print("[BRIDGE DEBUG] Sent: " + str(res) + '\n')
+    if(res[0] == "k" or (res[0] == "v" and "vKill;" in res)):
+      err_print("[BRIDGE DEBUG] Killing bridge in 3 seconds...\n")
+      t = Timer(3.0, exit_bridge)
+      t.start()
 
   def do_POST(self):
     content_length = int(self.headers['Content-Length'])
@@ -102,8 +110,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     # self.wfile.write(response.getvalue())
 
   def log_message(self, format, *args):
-    if(DEBUG_ENABLED):
-      super.log_message(format, args)
     return
 
 
