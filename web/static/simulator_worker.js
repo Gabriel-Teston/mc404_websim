@@ -83,6 +83,7 @@ function initFS() {
 
 var xhr = new XMLHttpRequest();
 function getDebugMsg(){
+  postGDBWaiting = 1;
   while(1){
     try{
       xhr.open("GET", "http://127.0.0.1:5689/gdbInput", false);  // synchronous request
@@ -91,13 +92,17 @@ function getDebugMsg(){
         return xhr.responseText;
       }
     }catch(e){
-      postMessage({type: "output", subtype: "info", msg: "Waiting for GDB..."});
+      if(postGDBWaiting){
+        postMessage({type: "output", subtype: "info", msg: "Waiting for GDB..."});
+        postGDBWaiting = 0;
+      }
     }
   }
 }
 
 var xhrS = new XMLHttpRequest();
 function sendDebugMsg(msg){
+  postGDBWaiting = 1;
   while(1){
     try {
       xhrS.open("POST", "http://127.0.0.1:5689/gdbInput", false);  // synchronous request
@@ -106,7 +111,10 @@ function sendDebugMsg(msg){
         return;
       }
     } catch (error) {
-      postMessage({type: "output", subtype: "info", msg: "Waiting for GDB..."});
+      if(postGDBWaiting){
+        postMessage({type: "output", subtype: "info", msg: "Waiting for GDB..."});
+        postGDBWaiting = 0;
+      }
     }
   }
 }
