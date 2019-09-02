@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 
-class RISCV_Simulator{
+export class RISCV_Simulator{
 
   constructor(HTMLFileList, outputFunction=null, sharedArraySize=0x10000){
     this.HTMLFileList = HTMLFileList;

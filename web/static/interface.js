@@ -1,7 +1,7 @@
 /*jshint esversion: 6 */
-// import RISCV_Simulator from "./simulator_controller.js";
+import {RISCV_Simulator} from "./simulator_controller.js";
 
-sim = new RISCV_Simulator(document.getElementById("codeSelector"), outputFunction);
+var sim = new RISCV_Simulator(document.getElementById("codeSelector"), outputFunction);
 sim.stdioBind(function() { // STDIN
                 return document.getElementById("stdin").value;
               },
@@ -16,19 +16,20 @@ sim.stdioBind(function() { // STDIN
                 outputFunction("STDERR", s);
               });
 
+
+var outHTML = document.getElementById("general_output");
 function outputFunction(type, msg){
-  outHTML = document.getElementById("general_output");
   outHTML.scrollTop = outHTML.scrollHeight;
   outHTML.innerHTML += "[" + type + "]" + msg + "\n";
 }
 
 function loadParameters(){
-  param = [];
+  var param = [];
   if(document.getElementById("gdb_switch").checked) param.push("--gdb");
   if(document.getElementById("newlib_switch").checked) param.push("--newlib");
   param.push("/working/" + document.getElementById("codeSelector").files[0].name);
   param.push("--isa");
-  ISAs = "";
+  var ISAs = "";
   if(document.getElementById("config_isaA").checked) ISAs += "a";
   if(document.getElementById("config_isaC").checked) ISAs += "c";
   if(document.getElementById("config_isaD").checked) ISAs += "d";
@@ -48,12 +49,9 @@ function download(filename, text) {
   var element = document.createElement('a');
   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
   element.setAttribute('download', filename);
-
   element.style.display = 'none';
   document.body.appendChild(element);
-
   element.click();
-
   document.body.removeChild(element);
 }
 
@@ -145,7 +143,7 @@ class MMIO_Monitor{
   }
 }
 
-mmioMonitor = new MMIO_Monitor(sim);
+var mmioMonitor = new MMIO_Monitor(sim);
 
 var sim_running = false;
 document.getElementById("run_button").onclick = function(){
@@ -158,7 +156,7 @@ document.getElementById("run_button").onclick = function(){
     mmioMonitor.stop();
   }else{
     sim_running = true;
-    args = loadParameters();
+    var args = loadParameters();
     sim.setArgs(args);
     document.getElementById("stdin").readOnly = true;
     if(document.getElementById("clean_switch").checked){
@@ -189,7 +187,7 @@ document.getElementById("stdin_upload").onclick = function(){
 
 document.getElementById("stdin_file_input").onchange = function(){
   if(document.getElementById("stdin_file_input").files.length){
-    file = document.getElementById("stdin_file_input").files[0];
+    var file = document.getElementById("stdin_file_input").files[0];
     var reader = new FileReader();
     reader.readAsText(file, "UTF-8");
     reader.onload = function (evt) {
