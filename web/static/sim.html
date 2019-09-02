@@ -8,6 +8,7 @@
   <script src="simulator_controller.js"></script>
   <link rel="stylesheet" href="sim.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" integrity="sha256-zmfNZmXoNWBMemUOo1XUGFfc0ihGGLYdgtJS3KCr/l0=" crossorigin="anonymous" />
 </head>
 <body>
   <div class="container-fluid d-flex flex-column" style="min-height: 100vh;">
@@ -85,10 +86,18 @@
               </div>
               <input type="text" class="form-control" id="config_cmdline" aria-describedby="basic-addon3" value="--setreg sp=0xfffff">
             </div>
-            <div class="custom-control custom-switch">
+            <div class="custom-control custom-switch custom-control-inline">
               <input type="checkbox" class="custom-control-input" id="exceptions_switch">
               <label class="custom-control-label" for="exceptions_switch">Simulator Exceptions</label>
             </div>
+            <div class="custom-control custom-switch custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="clean_switch" checked>
+              <label class="custom-control-label" for="clean_switch">Auto Clean Stdout</label>
+            </div>
+            <!-- <div class="custom-control custom-switch custom-control-inline">
+              <input type="checkbox" class="custom-control-input" id="_switch">
+              <label class="custom-control-label" for="_switch">Auto Clean StdIO</label>
+            </div> -->
           </div>
         </form>
       </div>
@@ -101,37 +110,62 @@
             <a class="nav-item nav-link active" id="nav-output-tab" data-toggle="tab" href="#nav-output" role="tab" aria-controls="nav-output" aria-selected="true">Output</a>
             <a class="nav-item nav-link" id="nav-stdio-tab" data-toggle="tab" href="#nav-stdio" role="tab" aria-controls="nav-stdio" aria-selected="false">Standard IO</a>
             <a class="nav-item nav-link" id="nav-mmio-tab" data-toggle="tab" href="#nav-mmio" role="tab" aria-controls="nav-mmio" aria-selected="false">Memory-Mapped IO</a>
-            <a class="nav-item nav-link" id="nav-interrupt-tab" data-toggle="tab" href="#nav-interrupt" role="tab" aria-controls="nav-interrupt" aria-selected="false">External Interruptions</a>
+            <a class="nav-item nav-link" id="nav-interrupt-tab" data-toggle="tab" href="#nav-interrupt" role="tab" aria-controls="nav-interrupt" aria-selected="false">External Devices</a>
           </div>
         </nav>
         <div class="tab-content" id="nav-tabContent">
-          <div class="tab-pane fade show active" id="nav-output" role="tabpanel" aria-labelledby="nav-output-tab">
+          <div class="tab-pane fade show active my-3" id="nav-output" role="tabpanel" aria-labelledby="nav-output-tab">
             <div class="form-group">
-              <textarea class="form-control" id="general_output" readonly  rows="4"></textarea>
+              <textarea class="form-control" id="general_output" readonly  rows="8"></textarea>
             </div>
           </div>
           <div class="tab-pane fade" id="nav-stdio" role="tabpanel" aria-labelledby="nav-stdio-tab">
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">STDIN</span>
+            <div class="row  mt-3">
+              <div class="col">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" style="display:inline-block;">
+                      <p>STDIN</p>
+                      <a href="#" class="text-reset" id="stdin_upload"><i class="fa fa-upload" aria-hidden="true" style="margin: 5px;"></i></a>
+                      <a href="#" class="text-reset" id="stdin_clean"><i class="fas fa-trash-alt" style="margin: 5px;"></i></a>
+                    </span>
+                  </div>
+                  <textarea class="form-control" id="stdin" rows="4"></textarea>
+                  <input id="stdin_file_input" type="file" name="name" style="display: none;" />
+                </div>
               </div>
-              <textarea class="form-control" id="stdin" rows="4">12 23</textarea>
             </div>
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">STDOUT</span>
+            <div class="row">
+              <div class="col">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" style="display: inline-block; ">
+                      <p>
+                        STDOUT
+                      </p>
+                      <a href="#" class="text-reset" id="stdout_download"><i class="fa fa-download" aria-hidden="true" style="margin: 5px;"></i></a>
+                      <a href="#" class="text-reset" id="stdout_clean"><i class="fas fa-trash-alt" style="margin: 5px;"></i></a>
+                    </span>
+                  </div>
+                  <textarea class="form-control" id="stdout" rows="8" readonly></textarea>
+                </div>
               </div>
-              <textarea class="form-control" id="stdout" rows="4" readonly></textarea>
-            </div>
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text">STDERR</span>
+              <div class="col">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" style="display: inline-block; ">
+                      <p>STDERR</p>
+                      <a href="#Download" class="text-reset" id="stderr_download"><i class="fa fa-download" aria-hidden="true" style="margin: 5px;"></i></a>
+                      <a href="#" class="text-reset" id="stderr_clean"><i class="fas fa-trash-alt" style="margin: 5px;"></i></a>
+                    </span>
+                  </div>
+                  <textarea class="form-control" id="stderr" rows="8" readonly></textarea>
+                </div>
               </div>
-              <textarea class="form-control" id="stderr" rows="4" readonly></textarea>
             </div>
           </div>
           <div class="tab-pane fade" id="nav-mmio" role="tabpanel" aria-labelledby="nav-mmio-tab">
-            <div class="input-group mb-3">
+            <div class="input-group my-3">
               <div class="input-group-prepend">
                   <span class="input-group-text">Memory[</span>
                   <input type="text" class="form-control" aria-label="Set MMIO value" placeholder="Address" id="mmio_set_address">
@@ -157,14 +191,42 @@
                 <button class="btn btn-outline-success" type="button" id="mmio_add">Add</button>
               </div>
             </div>
-            <div class="input-group">
+            <div class="input-group mb-3">
               <div class="input-group-prepend">
                 <span class="input-group-text">Monitoring</span>
               </div>
               <textarea class="form-control" id="mmio_area" readonly rows="6"></textarea>
             </div>
           </div>
-          <div class="tab-pane fade" id="nav-interrupt" role="tabpanel" aria-labelledby="nav-interrupt-tab">...</div>
+          <div class="tab-pane fade" id="nav-interrupt" role="tabpanel" aria-labelledby="nav-interrupt-tab">
+            <div class="row my-3">
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">External Interrupt</h5>
+                    <p class="card-text">
+                      Machine external interrupt
+                      <br>
+                      MIP: <span class="badge badge-secondary">False (initial)</span>
+                    </p>
+                    <a href="#" class="btn btn-primary">Trigger Interrupt</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Sound Synthesizer</h5>
+                    <p class="card-text">
+                      16-channel MIDI sound synthesizer <br>
+                      <span class="badge badge-secondary">Disabled</span>
+                    </p>
+                    <a href="#" class="btn btn-primary">Load Device</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

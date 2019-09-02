@@ -44,6 +44,20 @@ function loadParameters(){
   return param;
 }
 
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
+
 class MMIO_Monitor{
   constructor(sim){
     this.sim = sim;
@@ -137,6 +151,7 @@ var sim_running = false;
 document.getElementById("run_button").onclick = function(){
   if(sim_running){
     sim.stop();
+    document.getElementById("stdin").readOnly = false;
     run_button.innerHTML = "Run";
     run_button.setAttribute("class", "btn btn-outline-success");
     sim_running = false;
@@ -145,6 +160,11 @@ document.getElementById("run_button").onclick = function(){
     sim_running = true;
     args = loadParameters();
     sim.setArgs(args);
+    document.getElementById("stdin").readOnly = true;
+    if(document.getElementById("clean_switch").checked){
+      document.getElementById("stdout").value = "";
+      document.getElementById("stderr").value = "";
+    }
     sim.run(); 
     run_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Stop';
     run_button.setAttribute("class", "btn btn-danger");
@@ -161,5 +181,45 @@ codeSelector.onchange = function(){
     label_codeSelector.innerHTML = "Choose file";
   }
 };
+
+
+document.getElementById("stdin_upload").onclick = function(){
+  document.getElementById("stdin_file_input").click();
+};
+
+document.getElementById("stdin_file_input").onchange = function(){
+  if(document.getElementById("stdin_file_input").files.length){
+    file = document.getElementById("stdin_file_input").files[0];
+    var reader = new FileReader();
+    reader.readAsText(file, "UTF-8");
+    reader.onload = function (evt) {
+      document.getElementById("stdin").value = evt.target.result;
+    };
+    reader.onerror = function (evt) {
+      console.log("error reading file", evt);
+    };
+  }
+};
+
+document.getElementById("stdin_clean").onclick = function(){
+  document.getElementById("stdin").value = "";
+};
+
+document.getElementById("stdout_download").onclick = function(){
+  download("stdout.txt", document.getElementById("stdout").value);
+};
+
+document.getElementById("stdout_clean").onclick = function(){
+  document.getElementById("stdout").value = "";
+};
+
+document.getElementById("stderr_download").onclick = function(){
+  download("stderr.txt", document.getElementById("stderr").value);
+};
+
+document.getElementById("stderr_clean").onclick = function(){
+  document.getElementById("stderr").value = "";
+};
+
 
 
