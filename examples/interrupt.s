@@ -5,6 +5,10 @@ la a1, string_int #  buffer
 li a2, 12 # size
 li a7, 64 # syscall write (64)
 ecall
+  li t0, 0xffff5654
+  li t1, 0x63636363
+
+  sw t1, 0(t0) # 
 csrrw a0, mscratch, a0    # salva a0; "seta" a0 = &temp storage
 sw a1, 0(a0)              # salva a1
 sw a2, 4(a0)              # salva a2
@@ -24,6 +28,13 @@ mret # retorna do tratador
 
 .globl _start
 _start:
+
+  li t0, 0xffff5654
+  li t1, 0x12121212
+
+  sw t1, 0(t0) # 
+  
+
 
   la t0, int_handler 
   csrs mtvec, t0
@@ -62,6 +73,13 @@ user:
   li a7, 64 # syscall write (64)
   ecall
   add t0, t1, t2; # t0 = t1 + t2
+
+  li t0, 0xffff5654
+  li t1, 0x48484848
+
+  sw t1, 0(t0) # 
+
+
   j user
 
 
