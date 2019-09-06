@@ -7,6 +7,8 @@ export class RISCV_Simulator{
     this.outputFunction = outputFunction;
     this.stdioHandler = [];
     this.sharedArraySize = sharedArraySize;
+    this.devices = [];
+    this.syscalls = [];
     this.startWorker();
   }
 
@@ -33,6 +35,9 @@ export class RISCV_Simulator{
             console.log(e.data);
           }
           break;
+        case "device_message":
+          this.controller.syscalls[e.data.syscall](e.data.message);
+          break;
         default:
           console.log("w: " + e.data);
       }
@@ -41,6 +46,11 @@ export class RISCV_Simulator{
       this.mmio = new SharedArrayBuffer(this.sharedArraySize);
       this.w.postMessage({type: "mmio", vec: this.mmio});
     }
+    this.devices.map(function(x){x.setup();});
+  }
+
+  addDevice(obj){
+    this.devices.push(obj);
   }
 
   setArgs(args){
@@ -66,7 +76,10 @@ export class RISCV_Simulator{
     this.stdioHandler[2] = stderr;
   }
 
-  registerSyscall(number, syscall_code){
+  registerSyscall(number, syscall_code, syscall_handler){
+    if(syscall_handler){
+      this.syscalls[number] = syscall_handler;
+    }
     this.w.postMessage({type: "syscall", num: number, code: syscall_code});
   }
 

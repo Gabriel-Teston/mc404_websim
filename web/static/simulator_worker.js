@@ -84,10 +84,14 @@ class SyscallEmulator{
 
   run(a0, a1, a2, a3, a7){
     if(a7 in this.syscalls){
+      var sendMessage = function(msg){
+        postMessage({type: "device_message", syscall: a7, message: msg});
+      };
       eval(this.syscalls[a7]);
     }else{
       text = "Invalid syscall: " + a7;
       postMessage({type: "stdio", stdioNumber: 2, msg: text});
+      return 0;
     }
   }
 }
