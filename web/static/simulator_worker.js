@@ -1,14 +1,13 @@
 /*jshint esversion: 6 */
 
-var stdinBuffer = "12 23";
+var stdinBuffer = "";
 
 onmessage = function(e) {
   switch(e.data.type){
     case "code_load":
       files = e.data.code;
       break;
-    case "start_sim":
-      intController = new InterruptionController();
+    case "start_sim":  
       importScripts("whisper.js");
       break;
     case "stdin":
@@ -20,6 +19,12 @@ onmessage = function(e) {
       break;
     case "mmio":
       mmio = new MMIO(e.data.vec);
+      break;
+    case "syscall":
+      syscall_emulator.register(parseInt(e.data.num), e.data.code);
+      break;
+    case "interrupt":
+      intController.changeState(parseInt(e.data.state));
       break;
   }
 };
@@ -52,14 +57,43 @@ class MMIO{
 
 class InterruptionController{
   constructor(){
+    this.state = 0;
+  }
 
+  changeState(state){
+    this.state = state;
   }
 
   get interrupt(){
-    console.log("check");
-    return 0;
+    return this.state;
+  }
+
+  get interruptEnabled(){
+    return 1;
   }
 }
+
+class SyscallEmulator{
+  constructor(){
+    this.syscalls = [];
+  }
+
+  register(number, code){
+    this.syscalls[number] = code;
+  }
+
+  run(a0, a1, a2, a3, a7){
+    if(a7 in this.syscalls){
+      eval(this.syscalls[a7]);
+    }else{
+      text = "Invalid syscall: " + a7;
+      postMessage({type: "stdio", stdioNumber: 2, msg: text});
+    }
+  }
+}
+
+var syscall_emulator = new SyscallEmulator();
+var intController = new InterruptionController();
 
 
 function getStdin (){

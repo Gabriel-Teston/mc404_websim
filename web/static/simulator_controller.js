@@ -66,6 +66,14 @@ export class RISCV_Simulator{
     this.stdioHandler[2] = stderr;
   }
 
+  registerSyscall(number, syscall_code){
+    this.w.postMessage({type: "syscall", num: number, code: syscall_code});
+  }
+
+  setInterruptState(s){
+    this.w.postMessage({type: "interrupt", state: s});
+  }
+
   get stdin(){
     throw("STDIN is write-only");
   }
