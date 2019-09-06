@@ -1,7 +1,11 @@
-/*jshint esversion: 6 */
+/*jshint esversion: 6*/
 import {RISCV_Simulator} from "./simulator_controller.js";
+import {ModuleLoader} from "./module_loader.js";
 
 var sim = new RISCV_Simulator(document.getElementById("codeSelector"), outputFunction);
+var moduleLoader = new ModuleLoader(sim, document.getElementById("devices_area"));
+moduleLoader.loadAll();
+
 sim.stdioBind(function() { // STDIN
                 return document.getElementById("stdin").value;
               },

@@ -74,13 +74,13 @@ user:
   ecall
   add t0, t1, t2; # t0 = t1 + t2
 
-  li t0, 0xffff5654
-  li t1, 0x48484848
+  # li t0, 0xffff5654
+  # li t1, 0x48484848
 
-  sw t1, 0(t0) # 
+  # sw t1, 0(t0) # 
 
-
-  j user
+user2:
+  j user2
 
 
 data:
