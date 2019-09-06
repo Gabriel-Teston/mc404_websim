@@ -40,7 +40,7 @@
             </div>
             <div class="custom-control custom-switch custom-control-inline">
               <input type="checkbox" class="custom-control-input" id="newlib_switch" checked=true>
-              <label class="custom-control-label" for="newlib_switch">Newlib</label>
+              <label class="custom-control-label" for="newlib_switch">Syscall Emulation</label>
             </div>
             <br>
             <input type="button" class="btn btn-link" value="Advanced Options" data-toggle="collapse" data-target="#advanced_options_div" aria-expanded="false" aria-controls="advanced_options_div">
@@ -84,7 +84,7 @@
               <div class="input-group-prepend">
                 <span class="input-group-text" id="config_cmdline_base">Additional parameters:</span>
               </div>
-              <input type="text" class="form-control" id="config_cmdline" aria-describedby="basic-addon3" value="--setreg sp=0xfffff">
+              <input type="text" class="form-control" id="config_cmdline" aria-describedby="basic-addon3" value="--setreg sp=0x7fffffc">
             </div>
             <div class="custom-control custom-switch custom-control-inline">
               <input type="checkbox" class="custom-control-input" id="exceptions_switch">

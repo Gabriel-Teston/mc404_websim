@@ -40,7 +40,7 @@ function loadParameters(){
   if(document.getElementById("config_isaU").checked) ISAs += "u";
   param.push(ISAs);
   param = param.concat(document.getElementById("config_cmdline").value.trim().split(" ").filter(function (el) {
-    return el != null;
+    return el != null && el != "";
   }));
   return param;
 }
@@ -196,6 +196,14 @@ document.getElementById("stdin_file_input").onchange = function(){
     reader.onerror = function (evt) {
       console.log("error reading file", evt);
     };
+  }
+};
+
+document.getElementById("newlib_switch").onchange = function(){
+  if(document.getElementById("newlib_switch").checked){
+    document.getElementById("config_cmdline").value = "--setreg sp=0x7fffffc";
+  }else{
+    document.getElementById("config_cmdline").value = "";
   }
 };
 
