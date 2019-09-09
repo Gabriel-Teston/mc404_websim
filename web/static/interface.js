@@ -222,7 +222,7 @@ document.getElementById("stdin_file_input").onchange = function(){
 document.getElementById("gdb_switch").onchange = function(){
   var ua = navigator.userAgent.toLowerCase(); 
   if((ua.indexOf('firefox') > -1 || ua.indexOf('safari') > -1) && ua.indexOf('chrome') == -1){
-    if (1 || location.protocol == 'https:'){ 
+    if (location.protocol == 'https:'){ 
       $("#gdbBrowser").modal('show');
     }
   }
