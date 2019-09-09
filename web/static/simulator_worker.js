@@ -12,7 +12,6 @@ onmessage = function(e) {
       break;
     case "stdin":
       stdinBuffer = e.data.stdin;
-      console.log("STDIN = " + stdinBuffer);
       break;
     case "set_args":
       Module.arguments = e.data.vec;
@@ -89,7 +88,7 @@ class SyscallEmulator{
       };
       eval(this.syscalls[a7]);
     }else{
-      text = "Invalid syscall: " + a7;
+      var text = "Invalid syscall: " + a7;
       postMessage({type: "stdio", stdioNumber: 2, msg: text});
       return 0;
     }

@@ -20,7 +20,6 @@ export default class SimpleInterrupt extends Device{
     this.HTMLstatus = document.getElementById("interrupt_status");
   }
 
-
   trigger(){
     this.device.simulator.setInterruptState(1);
     this.device.HTMLstatus.innerHTML = "True (triggered)";

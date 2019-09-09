@@ -36,7 +36,7 @@ export class RISCV_Simulator{
           }
           break;
         case "device_message":
-          this.controller.syscalls[e.data.syscall](e.data.message);
+          this.controller.syscalls[e.data.syscall].onmessage(e.data.message);
           break;
         default:
           console.log("w: " + e.data);
@@ -77,7 +77,7 @@ export class RISCV_Simulator{
   }
 
   registerSyscall(number, syscall_code, syscall_handler){
-    if(syscall_handler){
+    if(syscall_handler != undefined){
       this.syscalls[number] = syscall_handler;
     }
     this.w.postMessage({type: "syscall", num: number, code: syscall_code});
