@@ -17,6 +17,12 @@
         <h6>
           JavaScript version of <a href="https://github.com/westerndigitalcorporation/swerv-ISS" target="_blank">Western Digital's SweRV Instruction Set Simulator</a>
         </h6>
+        <div class="alert alert-danger alert-dismissible fade show" id="browserAlert" role="alert" style="display: none;">
+          <strong>Unsupported Browser</strong> <br> Your browser is not officially supported yet. Some features were disabled. <br> Error details: <a href="https://caniuse.com/#feat=sharedarraybuffer" target="_blank">SharedArrayBuffer</a> is not supported.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
         <img src="riscv-logo-2.png" class="img-fluid" alt="riscv logo">
       </div>
     </div>
@@ -201,6 +207,26 @@
           <div class="tab-pane fade" id="nav-interrupt" role="tabpanel" aria-labelledby="nav-interrupt-tab">
             <div id="devices_area" class="row my-3">
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="gdbBrowser" tabindex="-1" role="dialog" aria-labelledby="gdbBrowserTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="gdbBrowserTitle">Unsupported Browser</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            This browser does not allow connection to GDB from a secure (HTTPS) page.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-danger" onclick="location.href = 'http:' + window.location.href.substring(window.location.protocol.length);">Reload in <strong>insecure</strong> mode</button>
           </div>
         </div>
       </div>

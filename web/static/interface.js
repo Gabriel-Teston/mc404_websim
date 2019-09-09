@@ -6,19 +6,30 @@ var sim = new RISCV_Simulator(document.getElementById("codeSelector"), outputFun
 var moduleLoader = new ModuleLoader(sim, document.getElementById("devices_area"));
 moduleLoader.loadAll();
 
+if(typeof SharedArrayBuffer == "undefined"){
+  document.getElementById("browserAlert").style.display = "block";
+}
+
+var stdoutBuffer = "";
+var stderrBuffer = "";
+
 sim.stdioBind(function() { // STDIN
                 return document.getElementById("stdin").value;
               },
               function(s) { // STDOUT
-                document.getElementById("stdout").scrollTop = document.getElementById("stdout").scrollHeight;
-                document.getElementById("stdout").value += s + "\n";
-                outputFunction("STDOUT", s);
+                stdoutBuffer += s + "\n";
               },
               function(s) { // STDERR
-                document.getElementById("stderr").scrollTop = document.getElementById("stderr").scrollHeight;
-                document.getElementById("stderr").value += s + "\n";
-                outputFunction("STDERR", s);
+                stderrBuffer += s + "\n";
               });
+
+
+function updateStdout(){
+  document.getElementById("stdout").value = stdoutBuffer.slice(-1500);         
+  document.getElementById("stdout").scrollTop = document.getElementById("stdout").scrollHeight;
+  document.getElementById("stderr").value = stderrBuffer.slice(-1500);      
+  document.getElementById("stderr").scrollTop = document.getElementById("stderr").scrollHeight;
+}
 
 
 var outHTML = document.getElementById("general_output");
@@ -149,6 +160,7 @@ class MMIO_Monitor{
 
 var mmioMonitor = new MMIO_Monitor(sim);
 
+var stdoutTimeUpdate;
 var sim_running = false;
 document.getElementById("run_button").onclick = function(){
   if(sim_running){
@@ -158,12 +170,15 @@ document.getElementById("run_button").onclick = function(){
     run_button.setAttribute("class", "btn btn-outline-success");
     sim_running = false;
     mmioMonitor.stop();
+    clearInterval(stdoutTimeUpdate);
   }else{
     sim_running = true;
     var args = loadParameters();
     sim.setArgs(args);
     document.getElementById("stdin").readOnly = true;
     if(document.getElementById("clean_switch").checked){
+      stdoutBuffer = "";
+      stderrBuffer = "";
       document.getElementById("stdout").value = "";
       document.getElementById("stderr").value = "";
     }
@@ -171,6 +186,7 @@ document.getElementById("run_button").onclick = function(){
     run_button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Stop';
     run_button.setAttribute("class", "btn btn-danger");
     mmioMonitor.start();
+    stdoutTimeUpdate = setInterval(updateStdout, 250);
   }
 };
 
@@ -203,6 +219,15 @@ document.getElementById("stdin_file_input").onchange = function(){
   }
 };
 
+document.getElementById("gdb_switch").onchange = function(){
+  var ua = navigator.userAgent.toLowerCase(); 
+  if((ua.indexOf('firefox') > -1 || ua.indexOf('safari') > -1) && ua.indexOf('chrome') == -1){
+    if (1 || location.protocol == 'https:'){ 
+      $("#gdbBrowser").modal('show');
+    }
+  }
+};
+
 document.getElementById("newlib_switch").onchange = function(){
   if(document.getElementById("newlib_switch").checked){
     document.getElementById("config_cmdline").value = "--setreg sp=0x7fffffc";
@@ -216,18 +241,20 @@ document.getElementById("stdin_clean").onclick = function(){
 };
 
 document.getElementById("stdout_download").onclick = function(){
-  download("stdout.txt", document.getElementById("stdout").value);
+  download("stdout.txt", stdoutBuffer);
 };
 
 document.getElementById("stdout_clean").onclick = function(){
+  stdoutBuffer = "";
   document.getElementById("stdout").value = "";
 };
 
 document.getElementById("stderr_download").onclick = function(){
-  download("stderr.txt", document.getElementById("stderr").value);
+  download("stderr.txt", stderrBuffer);
 };
 
 document.getElementById("stderr_clean").onclick = function(){
+  stderrBuffer = "";
   document.getElementById("stderr").value = "";
 };
 
