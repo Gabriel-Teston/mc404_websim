@@ -1,5 +1,28 @@
 /*jshint esversion: 9*/
 
+export class Device{
+  constructor(sim, setHMTL){
+    this.simulator = sim;
+    this.setHMTL = setHMTL;
+  }
+
+  addCard(code){
+    this.setHMTL(code);
+  }
+  
+  set html(code){
+    this.setHMTL(code);
+  }
+
+  get html(){
+    return "";
+  }
+
+  setup(){
+
+  }
+}
+
 export class ModuleLoader{
   constructor(sim, html){
     this.moduleList = ["simple_interrupt.js", "midi_synthesizer.js"];
@@ -11,21 +34,21 @@ export class ModuleLoader{
   loadAll(){
     for(var i in this.moduleList){
       this.load(this.moduleList[i], this.sim, this.html);
-      
     }
   }
 
   async load(name, sim, html){
     var module = await import("./devices/" + name);
-    var device = new module.default(sim);
-    html.insertAdjacentHTML('beforeend', `
-    <div class="col-sm-4">
-      <div class="card">
-        ${device.html}
+    var setHTML = function(code){
+      html.insertAdjacentHTML('beforeend', `
+      <div class="col-sm-4">
+        <div class="card">
+          ${code}
+        </div>
       </div>
-    </div>
-    `); 
+      `); 
+    };
+    var device = new module.default(sim, setHTML);
     sim.addDevice(device);
-    device.html_setup();
   }
 }

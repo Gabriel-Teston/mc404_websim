@@ -1,9 +1,10 @@
 /*jshint esversion: 6 */
+import {Device} from "../module_loader.js";
 
-export default class MIDI_Synthesizer{
-  constructor(simulator){
-    this.simulator = simulator;
-    this.html =`
+export default class MIDI_Synthesizer extends Device{
+  constructor(...args){
+    super(...args);
+    this.addCard(`
     <div class="card-body">
       <h5 class="card-title">Sound Synthesizer</h5>
       <p class="card-text">
@@ -12,11 +13,7 @@ export default class MIDI_Synthesizer{
       </p>
       <a href="#" class="btn btn-primary">Load Device</a>
     </div>
-    `;
-  }
-  
-  html_setup(){
-
+    `);
   }
 
   setup(){
