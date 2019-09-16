@@ -10,6 +10,14 @@ if(typeof SharedArrayBuffer == "undefined"){
   document.getElementById("browserAlert").style.display = "block";
 }
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+  }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+  });
+}
+
 var stdoutBuffer = "";
 var stderrBuffer = "";
 
