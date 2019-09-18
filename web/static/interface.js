@@ -18,6 +18,14 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+function cliToolsUpdate(){
+  
+}
+
+window.onload = function(){
+  setInterval(cliToolsUpdate, 500);
+};
+
 var stdoutBuffer = "";
 var stderrBuffer = "";
 
@@ -157,7 +165,7 @@ class MMIO_Monitor{
       mmioMonitor.int8memory = new Uint8Array(mmioMonitor.sim.mmio);
       mmioMonitor.int16memory = new Uint16Array(mmioMonitor.sim.mmio);
       mmioMonitor.int32memory = new Uint32Array(mmioMonitor.sim.mmio);
-      mmioMonitor.timer = setInterval(mmioMonitor.mmioMonitoring, 500);
+      mmioMonitor.timer = setInterval(mmioMonitor.mmioMonitoring, 250);
     }
   }
 
