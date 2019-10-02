@@ -2,7 +2,9 @@
 import {RISCV_Simulator} from "./simulator_controller.js";
 import {ModuleLoader} from "./module_loader.js";
 
-var sim = new RISCV_Simulator(document.getElementById("codeSelector"), outputFunction);
+
+var fileList = {files: []};
+var sim = new RISCV_Simulator(fileList, outputFunction);
 var moduleLoader = new ModuleLoader(sim, document.getElementById("devices_area"));
 moduleLoader.loadAll();
 
@@ -17,14 +19,6 @@ if ('serviceWorker' in navigator) {
       console.warn('Error whilst registering service worker', err);
   });
 }
-
-function cliToolsUpdate(){
-  
-}
-
-window.onload = function(){
-  setInterval(cliToolsUpdate, 500);
-};
 
 var stdoutBuffer = "";
 var stderrBuffer = "";
@@ -58,7 +52,7 @@ function loadParameters(){
   var param = [];
   if(document.getElementById("gdb_switch").checked) param.push("--gdb");
   if(document.getElementById("newlib_switch").checked) param.push("--newlib");
-  param.push("/working/" + document.getElementById("codeSelector").files[0].name);
+  param.push("/working/" + fileList.files[0].name);
   param.push("--isa");
   var ISAs = "";
   if(document.getElementById("config_isaA").checked) ISAs += "a";
@@ -187,8 +181,12 @@ document.getElementById("run_button").onclick = function(){
     sim_running = false;
     mmioMonitor.stop();
     clearInterval(stdoutTimeUpdate);
+    clitools.filePending = false;
   }else{
     sim_running = true;
+    if(clitools.filePending == false){
+      fileList.files[0] = document.getElementById("codeSelector").files[0];
+    }
     var args = loadParameters();
     sim.setArgs(args);
     document.getElementById("stdin").readOnly = true;
@@ -274,5 +272,100 @@ document.getElementById("stderr_clean").onclick = function(){
   document.getElementById("stderr").value = "";
 };
 
+class CLITools{
+  constructor(sim){
+    this.simulator = sim;
+    this.filePending = false;
+    this.xhr = new XMLHttpRequest();
+    this.xhr.clitools = this;
+    this.status = "initial";
+    this.stdoutSentLength = 0;
+    this.stderrSentLength = 0;
+  }
 
+  enable(){
+    this.interval = setInterval(this.update.bind(this), 500);
+  }
 
+  disable(){
+    clearInterval(this.interval);
+  }
+
+  run(){
+    this.stdoutSentLength = 0;
+    this.stderrSentLength = 0;
+    document.getElementById("run_button").click();
+    this.status = "running";
+  }
+
+  stop(){
+    this.filePending = false;
+    document.getElementById("run_button").click();
+    this.status = "initial";
+  }
+
+  updateSTDIN(){
+    this.xhr.open("GET", "http://127.0.0.1:8695/stdin", true);
+    this.xhr.responseType = "text";
+    this.xhr.onload = function( e ) {
+      document.getElementById("stdin").value = this.xhr.responseText;
+      this.status = "stdinReceived";
+      this.run();
+    }.bind(this);
+    this.xhr.onerror = function( e ) {
+      this.status = "initial";
+    }.bind(this);
+    this.xhr.send();
+  }
+
+  updateSTDOUT(){
+    this.xhr.open("POST", "http://127.0.0.1:8695/stdout", true);
+    this.xhr.responseType = "text";
+    this.xhr.onload = function( e ) {
+    };
+    this.xhr.onerror = function( e ) {
+      this.stop();
+    }.bind(this);
+    var stdoutCurrData = stdoutBuffer.slice(this.stdoutSentLength);
+    var stderrCurrData = stderrBuffer.slice(this.stderrSentLength);
+    this.xhr.send(JSON.stringify([stdoutCurrData, stderrCurrData]));
+    this.stdoutSentLength = stdoutBuffer.length;
+    this.stderrSentLength = stderrBuffer.length;
+  }
+
+  update(){
+    if(this.status == "initial" && sim_running == false){
+      this.xhr.open("GET", "http://127.0.0.1:8695/code", true);
+      this.xhr.responseType = "blob";
+      this.xhr.onload = function( e ) {
+        var file = new File([this.xhr.response], "cli_code");
+        fileList.files[0] = file;
+        this.filePending = true;
+        this.status = "fileReceived";
+        this.updateSTDIN();
+      }.bind(this);
+      this.xhr.onerror = function( e ) {
+        this.status = "initial";
+      }.bind(this);
+      this.xhr.send();
+      this.status = "sent";
+    }else if(this.status == "running"){
+      this.updateSTDOUT();
+    }
+  }
+}
+var clitools = new CLITools(sim);
+
+document.getElementById("cli_run_switch").onchange = function(){
+  if(document.getElementById("cli_run_switch").checked){
+    clitools.enable();
+  }else{
+    clitools.disable();
+  }
+};
+
+window.onload = function(){
+  if(document.getElementById("cli_run_switch").checked){
+    clitools.enable();
+  }
+};

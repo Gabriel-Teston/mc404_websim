@@ -3,7 +3,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from threading import Timer
 from io import BytesIO
 from sys import stdin, stdout, stderr
-import os, sys
+import os, sys, json
 
 elf_data = ""
 stdin_data = ""
@@ -20,19 +20,20 @@ def err_print(m):
   stderr.flush()
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
-
   def do_GET(self):
     self.send_response(200)
     self.send_header("Access-Control-Allow-Origin", "*")
-    self.send_header('Content-type','text/html')
-    self.end_headers()
-    err_print("[CLI SIM DEBUG] Reading from GDB\n")
     if("code" in self.path):
+      self.send_header('Content-type','application/octet-stream')
+      self.end_headers()
       res = elf_data
+      self.wfile.write(res)
     elif ("stdin" in self.path):
-      res = stdin_data
-    self.wfile.write(bytes(res, "utf-8"))
-    err_print("[CLI SIM DEBUG] Sent: " + str(res) + '\n')
+      self.send_header('Content-type','text/html')
+      self.end_headers()
+      res = sys.stdin.read()
+      self.wfile.write(bytes(res, "utf-8"))
+      err_print("[CLI SIM DEBUG] Sent: " + str(res) + '\n')
 
   def do_POST(self):
     content_length = int(self.headers['Content-Length'])
@@ -41,13 +42,18 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     self.send_header("Access-Control-Allow-Origin", "*")
     self.send_header('Content-type','text/html')
     self.end_headers()
-    err_print("[BRIDGE DEBUG] Writing to GDB\n")
-    print(body.decode("utf-8"))
-    err_print("[BRIDGE DEBUG] Received: " + body.decode("utf-8") + '\n')
+    data = body.decode("utf-8")
+    stdout_data, stderr_data = json.loads(data)
+    stdout.write(stdout_data)
+    stderr.write(stderr_data)
+    err_print("[CLI SIM DEBUG] Received: " + body.decode("utf-8") + '\n')
 
   def log_message(self, format, *args):
     return
 
 if __name__ == "__main__":
+  elfFile = open(sys.argv[1], "rb")
+  elf_data = elfFile.read()
+  elfFile.close()
   httpd = HTTPServer(('localhost', 8695), SimpleHTTPRequestHandler)
   httpd.serve_forever()
