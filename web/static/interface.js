@@ -1,7 +1,7 @@
 /*jshint esversion: 6*/
 import {RISCV_Simulator} from "./simulator_controller.js";
 import {ModuleLoader} from "./module_loader.js";
-
+var version_text = `version: d3a150e`;
 
 var fileList = {files: []};
 var sim = new RISCV_Simulator(fileList, outputFunction);
@@ -368,4 +368,5 @@ window.onload = function(){
   if(document.getElementById("cli_run_switch").checked){
     clitools.enable();
   }
+  document.getElementById("div_version").innerHTML = version_text;
 };
