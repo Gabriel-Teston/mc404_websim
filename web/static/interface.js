@@ -5,7 +5,7 @@ var version_text = `version: d3a150e`;
 
 var fileList = {files: []};
 var sim = new RISCV_Simulator(fileList, outputFunction);
-var moduleLoader = new ModuleLoader(sim, document.getElementById("devices_area"));
+var moduleLoader = new ModuleLoader(sim, document.getElementById("devices_area"), document.getElementById("big_devices_area"));
 moduleLoader.loadAll();
 
 if(typeof SharedArrayBuffer == "undefined"){
@@ -85,9 +85,9 @@ class MMIO_Monitor{
   constructor(sim){
     this.sim = sim;
     this.addressList = [];
-    this.int8memory = new Uint8Array(this.sim.mmio);
-    this.int16memory = new Uint16Array(this.sim.mmio);
-    this.int32memory = new Uint32Array(this.sim.mmio);
+    this.int8memory = new Uint8Array(this.sim.mmio.sharedBuffer);
+    this.int16memory = new Uint16Array(this.sim.mmio.sharedBuffer);
+    this.int32memory = new Uint32Array(this.sim.mmio.sharedBuffer);
     document.getElementById("mmio_add").onclick = this.addHTML;
     document.getElementById("mmio_remove").onclick = this.removeHTML;
     document.getElementById("mmio_set8").onclick = this.set8;
@@ -156,9 +156,9 @@ class MMIO_Monitor{
 
   start(){
     if(typeof SharedArrayBuffer != "undefined"){
-      mmioMonitor.int8memory = new Uint8Array(mmioMonitor.sim.mmio);
-      mmioMonitor.int16memory = new Uint16Array(mmioMonitor.sim.mmio);
-      mmioMonitor.int32memory = new Uint32Array(mmioMonitor.sim.mmio);
+      mmioMonitor.int8memory = new Uint8Array(mmioMonitor.sim.mmio.sharedBuffer);
+      mmioMonitor.int16memory = new Uint16Array(mmioMonitor.sim.mmio.sharedBuffer);
+      mmioMonitor.int32memory = new Uint32Array(mmioMonitor.sim.mmio.sharedBuffer);
       mmioMonitor.timer = setInterval(mmioMonitor.mmioMonitoring, 250);
     }
   }

@@ -1,5 +1,27 @@
 /*jshint esversion: 6 */
 
+class MMIO{
+  constructor(size){
+    this.sharedBuffer = new SharedArrayBuffer();
+    this.memory = [];
+    this.memory[1] = new Uint8Array(this.sharedBuffer);
+    this.memory[2] = new Uint16Array(this.sharedBuffer);
+    this.memory[4] = new Uint32Array(this.sharedBuffer);
+    this.size = this.sharedBuffer.byteLength;
+    this.broadcastChannel = new BroadcastChannel('mmio_broadcast');
+  }
+
+  load(addr, size){
+    addr &= 0xFFFF;
+    return Atomics.load(this.memory[size], (addr/size) | 0);
+  }
+
+  store(addr, size, value){
+    addr &= 0xFFFF;
+    Atomics.store(this.memory[size], (addr/size) | 0, value);
+  }
+}
+
 export class RISCV_Simulator{
 
   constructor(HTMLFileList, outputFunction=null, sharedArraySize=0x10000){
@@ -36,15 +58,15 @@ export class RISCV_Simulator{
           }
           break;
         case "device_message":
-          this.controller.syscalls[e.data.syscall].onmessage(e.data.message);
+          this.controller.syscalls[e.data.syscall](e.data.message);
           break;
         default:
           console.log("w: " + e.data);
       }
     };
     if(typeof SharedArrayBuffer != "undefined"){
-      this.mmio = new SharedArrayBuffer(this.sharedArraySize);
-      this.w.postMessage({type: "mmio", vec: this.mmio});
+      this.mmio = new MMIO(this.sharedArraySize);
+      this.w.postMessage({type: "mmio", vec: this.mmio.sharedBuffer});
     }
     this.devices.map(function(x){x.setup();});
   }

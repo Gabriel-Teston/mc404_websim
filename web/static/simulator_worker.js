@@ -29,12 +29,13 @@ onmessage = function(e) {
 };
 
 class MMIO{
-  constructor(sharedBuffer){
+  constructor(sharedBuffer, bc){
     this.memory = [];
     this.memory[1] = new Uint8Array(sharedBuffer);
     this.memory[2] = new Uint16Array(sharedBuffer);
     this.memory[4] = new Uint32Array(sharedBuffer);
     this.size = sharedBuffer.byteLength;
+    this.broadcastChannel = new BroadcastChannel('mmio_broadcast');
   }
 
   load(addr, size){
@@ -51,6 +52,7 @@ class MMIO{
       postMessage({type: "output", subtype: "error", msg: "MMIO Access Error"});
     }
     Atomics.store(this.memory[size], (addr/size) | 0, value);
+    this.broadcastChannel.postMessage({type: "write", addr: (0xFFFF0000 | addr), size, value});
   }
 }
 
@@ -87,6 +89,7 @@ class SyscallEmulator{
         postMessage({type: "device_message", syscall: a7, message: msg});
       };
       eval(this.syscalls[a7]);
+      return a0;
     }else{
       var text = "Invalid syscall: " + a7;
       postMessage({type: "stdio", stdioNumber: 2, msg: text});

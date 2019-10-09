@@ -9,11 +9,11 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" integrity="sha256-zmfNZmXoNWBMemUOo1XUGFfc0ihGGLYdgtJS3KCr/l0=" crossorigin="anonymous" />
   <link rel="manifest" href="manifest.json">
-  <link rel="shortcut icon" type="image/png" href="./images/logo_192_.png"/>
+  <link rel="shortcut icon" type="image/png" href="./images/logo_b_192.png"/>
 </head>
 <body>
   <div class="container-fluid d-flex flex-column" style="min-height: 100vh;">
-    <div class="row text-center justify-content-md-center" id="title">
+    <div class="row text-center justify-content-md-center flex-grow-1" id="title">
       <div class="col col-xl-4">
         <h6>
           JavaScript version of <a href="https://github.com/westerndigitalcorporation/swerv-ISS" target="_blank">Western Digital's SweRV Instruction Set Simulator</a>
@@ -24,90 +24,93 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <img src="riscv-logo-2.png" class="img-fluid" alt="riscv logo">
-      </div>
+        <img src="riscv-logo-2.png" class="img-fluid" alt="riscv logo"> <br>
+      <!-- </div>
     </div>
     <div class="row text-center justify-content-md-center" id="config">
-      <div class="col col-xl-4">
+      <div class="col col-xl-4"> -->
         <div>
-        <form action="#">
-          <div class="input-group mb-3">
-            <div class="custom-file">
-              <input type="file" class="custom-file-input"  id="codeSelector" aria-describedby="run_button">
-              <label class="custom-file-label" for="codeSelector" id="label_codeSelector">Choose file</label>
-            </div>
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button" id="run_button">Run</button>
-            </div>
-          </div>
-          <div class="text-center">
-            <div class="custom-control custom-switch custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="gdb_switch">
-              <label class="custom-control-label" for="gdb_switch">GDB</label>
-            </div>
-            <div class="custom-control custom-switch custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="newlib_switch" checked=true>
-              <label class="custom-control-label" for="newlib_switch">Syscall Emulation</label>
-            </div>
-            <br>
-            <input type="button" class="btn btn-link" value="Advanced Options" data-toggle="collapse" data-target="#advanced_options_div" aria-expanded="false" aria-controls="advanced_options_div">
-          </div>
-          <div id="advanced_options_div" class="collapse text-center">
-            <label for="config_isa">ISAs:</label>
-            <div class="custom-control custom-checkbox custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="config_isaA" checked=true>
-              <label class="custom-control-label" for="config_isaA">A</label>
-            </div>
-            <div class="custom-control custom-checkbox custom-control-inline">
-                <input type="checkbox" class="custom-control-input" id="config_isaC" checked=true>
-                <label class="custom-control-label" for="config_isaC">C</label>
-            </div>
-            <div class="custom-control custom-checkbox custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="config_isaD" checked=true>
-              <label class="custom-control-label" for="config_isaD">D</label>
-            </div>
-            <div class="custom-control custom-checkbox custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="config_isaF" checked=true>
-              <label class="custom-control-label" for="config_isaF">F</label>
-            </div>
-            <div class="custom-control custom-checkbox custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="config_isaI" checked=true disabled>
-              <label class="custom-control-label" for="config_isaI">I</label>
-            </div>
-            <div class="custom-control custom-checkbox custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="config_isaM" checked=true>
-              <label class="custom-control-label" for="config_isaM">M</label>
-            </div>
-            <div class="custom-control custom-checkbox custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="config_isaS" checked=true>
-              <label class="custom-control-label" for="config_isaS">S</label>
-            </div>
-            <div class="custom-control custom-checkbox custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="config_isaU" checked=true>
-              <label class="custom-control-label" for="config_isaU">U</label>
-            </div>
-
+          <form action="#">
             <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="config_cmdline_base">Additional parameters:</span>
+              <div class="custom-file">
+                <input type="file" class="custom-file-input"  id="codeSelector" aria-describedby="run_button">
+                <label class="custom-file-label" for="codeSelector" id="label_codeSelector">Choose file</label>
               </div>
-              <input type="text" class="form-control" id="config_cmdline" aria-describedby="basic-addon3" value="--setreg sp=0x7fffffc">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="run_button">Run</button>
+              </div>
             </div>
-            <div class="custom-control custom-switch custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="exceptions_switch">
-              <label class="custom-control-label" for="exceptions_switch">Simulator Exceptions</label>
+            <div class="text-center">
+              <div class="custom-control custom-switch custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="gdb_switch">
+                <label class="custom-control-label" for="gdb_switch">GDB</label>
+              </div>
+              <div class="custom-control custom-switch custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="newlib_switch" checked=true>
+                <label class="custom-control-label" for="newlib_switch">Syscall Emulation</label>
+              </div>
+              <br>
+              <input type="button" class="btn btn-link" value="Advanced Options" data-toggle="collapse" data-target="#advanced_options_div" aria-expanded="false" aria-controls="advanced_options_div">
             </div>
-            <div class="custom-control custom-switch custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="clean_switch" checked>
-              <label class="custom-control-label" for="clean_switch">Auto Clean Stdout</label>
+            <div id="advanced_options_div" class="collapse text-center">
+              <label for="config_isa">ISAs:</label>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="config_isaA" checked=true>
+                <label class="custom-control-label" for="config_isaA">A</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                  <input type="checkbox" class="custom-control-input" id="config_isaC" checked=true>
+                  <label class="custom-control-label" for="config_isaC">C</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="config_isaD" checked=true>
+                <label class="custom-control-label" for="config_isaD">D</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="config_isaF" checked=true>
+                <label class="custom-control-label" for="config_isaF">F</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="config_isaI" checked=true disabled>
+                <label class="custom-control-label" for="config_isaI">I</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="config_isaM" checked=true>
+                <label class="custom-control-label" for="config_isaM">M</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="config_isaS" checked=true>
+                <label class="custom-control-label" for="config_isaS">S</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="config_isaU" checked=true>
+                <label class="custom-control-label" for="config_isaU">U</label>
+              </div>
+
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="config_cmdline_base">Additional parameters:</span>
+                </div>
+                <input type="text" class="form-control" id="config_cmdline" aria-describedby="basic-addon3" value="--setreg sp=0x7fffffc">
+              </div>
+              <div class="custom-control custom-switch custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="exceptions_switch">
+                <label class="custom-control-label" for="exceptions_switch">Simulator Exceptions</label>
+              </div>
+              <div class="custom-control custom-switch custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="clean_switch" checked>
+                <label class="custom-control-label" for="clean_switch">Auto Clean Stdout</label>
+              </div>
+              <div class="custom-control custom-switch custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="cli_run_switch">
+                <label class="custom-control-label" for="cli_run_switch">CLI Tools</label>
+              </div>
             </div>
-            <div class="custom-control custom-switch custom-control-inline">
-              <input type="checkbox" class="custom-control-input" id="cli_run_switch">
-              <label class="custom-control-label" for="cli_run_switch">CLI Tools</label>
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
+      <div id="big_devices_area" class="col-xl-8" style="display:none;">
+        
       </div>
     </div>
     <div class="row justify-content-md-center align-items-end flex-grow-1" id="io_area">

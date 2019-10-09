@@ -38,7 +38,7 @@ export default class MIDI_Synthesizer extends Device{
     var syscall =`
       sendMessage({a0, a1, a2});
     `;
-    this.simulator.registerSyscall(2048, syscall, this);
+    this.simulator.registerSyscall(2048, syscall, this.onmessage.bind(this));
   }
 
 }
