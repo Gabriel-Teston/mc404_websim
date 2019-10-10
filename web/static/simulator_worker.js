@@ -52,7 +52,7 @@ class MMIO{
       postMessage({type: "output", subtype: "error", msg: "MMIO Access Error"});
     }
     Atomics.store(this.memory[size], (addr/size) | 0, value);
-    this.broadcastChannel.postMessage({type: "write", addr: (0xFFFF0000 | addr), size, value});
+    this.broadcastChannel.postMessage({type: "write", addr: ((0xFFFF0000 | addr) >>> 0), size, value});
   }
 }
 

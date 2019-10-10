@@ -33,10 +33,11 @@ export default class Cleaner_robot extends Device{
     this.broadcastChannel.onmessage = this.mmioHandler.bind(this);
   }
 
-  mmioHandler(msg){
+  mmioHandler(bc_msg){
+    var msg = bc_msg.data;
     if(msg.type == "write"){
       if(msg.addr == 0xFFFF0004 && msg.value == 0){
-        getRobotPosition();
+        this.getRobotPosition();
       }else if(msg.addr == 0xFFFF000C){
         this.unityModule.SendMessage("RoombaModel", "SetMotor1Torque", (msg.value >> 16) / 10);
         var m2 = (msg.value&0xFFFF);
@@ -57,9 +58,9 @@ export default class Cleaner_robot extends Device{
     }
   }
 
-  roombaStatus(status){
-    var position = (parseInt(status.rot) << 20) | (parseInt(status.pos.x*10) << 10) | 
-                    parseInt(status.pos.z * 10);
+  roombaStatus(rot, pos){
+    var position = (parseInt(rot) << 20) | (parseInt(pos.x*10) << 10) | 
+                    parseInt(pos.z * 10);
     this.simulator.mmio.store(0xFFFF0008, 4, position);
     this.simulator.mmio.store(0xFFFF0004, 4, 1);
   }

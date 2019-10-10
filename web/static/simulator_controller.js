@@ -2,7 +2,7 @@
 
 class MMIO{
   constructor(size){
-    this.sharedBuffer = new SharedArrayBuffer();
+    this.sharedBuffer = new SharedArrayBuffer(size);
     this.memory = [];
     this.memory[1] = new Uint8Array(this.sharedBuffer);
     this.memory[2] = new Uint16Array(this.sharedBuffer);
