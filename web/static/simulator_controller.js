@@ -67,6 +67,9 @@ export class RISCV_Simulator{
     if(typeof SharedArrayBuffer != "undefined"){
       this.mmio = new MMIO(this.sharedArraySize);
       this.w.postMessage({type: "mmio", vec: this.mmio.sharedBuffer});
+      var interruptMem = new SharedArrayBuffer(1);
+      this.interruptTrigger = new Uint8Array(interruptMem);
+      this.w.postMessage({type: "interrupt", vec: interruptMem});
     }
     this.devices.map(function(x){x.setup();});
   }
@@ -106,7 +109,7 @@ export class RISCV_Simulator{
   }
 
   setInterruptState(s){
-    this.w.postMessage({type: "interrupt", state: s});
+    Atomics.store(this.interruptTrigger, 0, s);
   }
 
   get stdin(){

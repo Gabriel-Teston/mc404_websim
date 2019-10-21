@@ -23,7 +23,7 @@ onmessage = function(e) {
       syscall_emulator.register(parseInt(e.data.num), e.data.code);
       break;
     case "interrupt":
-      intController.changeState(parseInt(e.data.state));
+      intController.setMemoryTrigger(e.data.vec);
       break;
   }
 };
@@ -61,12 +61,16 @@ class InterruptionController{
     this.state = 0;
   }
 
+  setMemoryTrigger(vec){
+    this.memoryTrigger = new Uint8Array(vec);
+  }
+
   changeState(state){
     this.state = state;
   }
 
   get interrupt(){
-    return this.state;
+    return Atomics.compareExchange(this.memoryTrigger, 0, 1, 0);
   }
 
   get interruptEnabled(){

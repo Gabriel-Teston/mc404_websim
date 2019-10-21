@@ -1,53 +1,34 @@
+.org 0x100
 int_handler:
-# salva registradores
-li a0, 1 # file descriptor = 1 (stdout)
-la a1, string_int #  buffer
-li a2, 12 # size
-li a7, 64 # syscall write (64)
-ecall
-  li t0, 0xffff5654
-  li t1, 0x63636363
-
-  sw t1, 0(t0) # 
-csrrw a0, mscratch, a0    # salva a0; "seta" a0 = &temp storage
-sw a1, 0(a0)              # salva a1
-sw a2, 4(a0)              # salva a2
-sw a3, 8(a0)              # salva a3
-sw a4, 12(a0)             # salva a4
-# decodifica a causa da interrupção
-teste:
-  add t0, t1, t2; # t0 = t1 + t2
-  j teste
-# restaura registradores e retorna
-lw a4, 12(a0)             # restaura a4
-lw a3, 4(a0)              # restaura a3
-lw a2, 4(a0)              # restaura a2
-lw a1, 0(a0)              # restaura a1
-csrrw a0, mscratch, a0 # restaura a0; mscratch = &temp storage
-mret # retorna do tratador
+  li s1, 0x2000
+  li t1, 'H'
+  sb t1, 0(s1)
+  li t1, 'i'
+  sb t1, 0(s1)
+  li t1, '\n'
+  sb t1, 0(s1)
+  mret
 
 .globl _start
 _start:
 
-  li t0, 0xffff5654
-  li t1, 0x12121212
-
-  sw t1, 0(t0) # 
-  
-
-
   la t0, int_handler 
   csrs mtvec, t0
 
+
+  # Habilita Interrupções Global
   csrr t1, mstatus  
   ori t1, t1, 0x80 
   csrs mstatus, t1
 
+
+  # Habilita Interrupções Externas
   csrr t1, mie  
   li t2, 0x800
   or t1, t1, t2 
   csrs mie, t1
 
+  # Muda para o Modo de usuário
   csrr t1, mstatus 
   li t2, ~0x1800 
   and t1, t1, t2
@@ -59,37 +40,25 @@ _start:
 
   mret
 
-  li a0, 1 # file descriptor = 1 (stdout)
-  la a1, string_continue #  buffer
-  li a2, 12 # size
-  li a7, 64 # syscall write (64)
-  ecall
+  li s1, 0x2000
+  li t1, 'N'
+  sb t1, 0(s1)
+  li t1, 'O'
+  sb t1, 0(s1)
+  li t1, '\n'
+  sb t1, 0(s1)
 
 .align 4
 user:
-  li a0, 1 # file descriptor = 1 (stdout)
-  la a1, string_user #  buffer
-  li a2, 12 # size
-  li a7, 64 # syscall write (64)
-  ecall
-  add t0, t1, t2; # t0 = t1 + t2
+  li s1, 0x2000
+  li t1, 'U'
+  sb t1, 0(s1)
+  li t1, 'S'
+  sb t1, 0(s1)
+  li t1, 'R'
+  sb t1, 0(s1)
+  li t1, '\n'
+  sb t1, 0(s1)
 
-  # li t0, 0xffff5654
-  # li t1, 0x48484848
-
-  # sw t1, 0(t0) # 
-
-user2:
-  j user2
-
-
-data:
-
-string_user:
-.ascii "USER_STRING\n"
-
-string_continue:
-.ascii "CONT_STRING\n"
-
-string_int:
-.ascii "INTE_STRING\n"
+user_loop:
+  j user_loop

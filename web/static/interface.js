@@ -1,7 +1,7 @@
 /*jshint esversion: 6*/
 import {RISCV_Simulator} from "./simulator_controller.js";
 import {ModuleLoader} from "./module_loader.js";
-var version_text = `version: d3a150e`;
+var version_text = `version: d271048`;
 
 var fileList = {files: []};
 var sim = new RISCV_Simulator(fileList, outputFunction);
