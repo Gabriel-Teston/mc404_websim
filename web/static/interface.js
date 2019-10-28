@@ -26,8 +26,11 @@ var stderrBuffer = "";
 sim.stdioBind(function() { // STDIN
                 return document.getElementById("stdin").value;
               },
-              function(s) { // STDOUT
-                stdoutBuffer += s + "\n";
+              function(s, end) { // STDOUT
+                if(end == undefined){
+                  end = "\n";
+                }
+                stdoutBuffer += s + end;
               },
               function(s) { // STDERR
                 stderrBuffer += s + "\n";
