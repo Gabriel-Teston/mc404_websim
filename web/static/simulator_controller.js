@@ -121,7 +121,7 @@ export class RISCV_Simulator{
     for (var i = 1; i < s.length; i++) {
       Atomics.store(this.interactiveBuffer, i,  s.charCodeAt(i-1));
     }
-    Atomics.store(this.interactiveBuffer, i+1,  0);
+    Atomics.store(this.interactiveBuffer, i,  0);
     Atomics.store(this.interactiveBuffer, 0, 1);
   }
 
