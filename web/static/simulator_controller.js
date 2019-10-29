@@ -70,6 +70,10 @@ export class RISCV_Simulator{
       var interruptMem = new SharedArrayBuffer(1);
       this.interruptTrigger = new Uint8Array(interruptMem);
       this.w.postMessage({type: "interrupt", vec: interruptMem});
+
+      var interactiveMem = new SharedArrayBuffer(512);
+      this.interactiveBuffer = new Uint8Array(interactiveMem);
+      this.w.postMessage({type: "interactive", vec: interactiveMem});
     }
     this.devices.map(function(x){x.setup();});
   }
@@ -110,6 +114,15 @@ export class RISCV_Simulator{
 
   setInterruptState(s){
     Atomics.store(this.interruptTrigger, 0, s);
+  }
+
+  setInteractiveBuffer(s){
+    if (s.length >= 510) return;
+    for (var i = 1; i < s.length; i++) {
+      Atomics.store(this.interactiveBuffer, i,  s.charCodeAt(i-1));
+    }
+    Atomics.store(this.interactiveBuffer, i+1,  0);
+    Atomics.store(this.interactiveBuffer, 0, 1);
   }
 
   get stdin(){

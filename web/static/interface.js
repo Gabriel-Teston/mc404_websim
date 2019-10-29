@@ -54,6 +54,7 @@ function outputFunction(type, msg){
 function loadParameters(){
   var param = [];
   if(document.getElementById("gdb_switch").checked) param.push("--gdb");
+  if(document.getElementById("interactive_switch").checked) param.push("--interactive");
   if(document.getElementById("newlib_switch").checked) param.push("--newlib");
   param.push("/working/" + fileList.files[0].name);
   param.push("--isa");
@@ -235,6 +236,14 @@ document.getElementById("stdin_file_input").onchange = function(){
     reader.onerror = function (evt) {
       console.log("error reading file", evt);
     };
+  }
+};
+
+document.getElementById("interactive").oninput = function(){
+  var s = document.getElementById("interactive");
+  if(s.value.charAt(s.value.length-1) == "\n"){
+    sim.setInteractiveBuffer(s.value);
+    s.value = "";
   }
 };
 

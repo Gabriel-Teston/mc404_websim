@@ -2,6 +2,7 @@
 
 var stdinBuffer = "";
 
+
 onmessage = function(e) {
   switch(e.data.type){
     case "code_load":
@@ -21,6 +22,9 @@ onmessage = function(e) {
       break;
     case "syscall":
       syscall_emulator.register(parseInt(e.data.num), e.data.code);
+      break;
+    case "interactive":
+      interactiveBuffer = new Uint8Array(e.data.vec);
       break;
     case "interrupt":
       intController.setMemoryTrigger(e.data.vec);
@@ -114,6 +118,23 @@ function getStdin (){
   c = stdinBuffer.charCodeAt(0);
   stdinBuffer = stdinBuffer.slice(1);
   return c;
+}
+
+function getInteractiveCommand (){
+  while(1){
+    if(Atomics.load(interactiveBuffer, 0) == 1 ){
+      var i = 1;
+      var string = "";
+      var c = Atomics.load(interactiveBuffer, i);
+      while(c != 0){
+        string += String.fromCharCode(c);
+        i++;
+        c = Atomics.load(interactiveBuffer, i);
+      }
+      Atomics.store(interactiveBuffer, 0, 0);
+      return string;
+    }
+  }
 }
 
 function initFS() {

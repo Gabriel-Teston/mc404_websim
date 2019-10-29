@@ -46,6 +46,10 @@
                 <label class="custom-control-label" for="gdb_switch">GDB</label>
               </div>
               <div class="custom-control custom-switch custom-control-inline">
+                <input type="checkbox" class="custom-control-input" id="interactive_switch">
+                <label class="custom-control-label" for="interactive_switch">Interactive</label>
+              </div>
+              <div class="custom-control custom-switch custom-control-inline">
                 <input type="checkbox" class="custom-control-input" id="newlib_switch" checked=true>
                 <label class="custom-control-label" for="newlib_switch">Syscall Emulation</label>
               </div>
@@ -144,7 +148,20 @@
                   <input id="stdin_file_input" type="file" name="name" style="display: none;" />
                 </div>
               </div>
+            <div class="col">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" style="display:inline-block;">
+                    <p>Interactive</p>
+                    <a href="#" class="text-reset" id="interactive_upload"><i class="fa fa-upload" aria-hidden="true" style="margin: 5px;"></i></a>
+                    <a href="#" class="text-reset" id="interactive_clean"><i class="fas fa-trash-alt" style="margin: 5px;"></i></a>
+                  </span>
+                </div>
+                <textarea class="form-control" id="interactive" rows="4"></textarea>
+                <input id="interactive_file_input" type="file" name="name" style="display: none;" />
+              </div>
             </div>
+          </div>
             <div class="row">
               <div class="col">
                 <div class="input-group mb-3">
